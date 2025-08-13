@@ -65,12 +65,15 @@ else()
 				set(ZLIB_CONFIGURE_FLAGS "--static")
 			endif()
 			set(ZLIB_LIB "${ZLIB_SRC}/libz${ZLIB_LIB_SUFFIX}")
+			# needed to prevent splitting on CFLAGs
+			set(ZLIB_CFLAGS_ARG "CFLAGS=${ZLIB_CFLAGS}")
 			ExternalProject_Add(
 				zlib
 				PREFIX "${PROJECT_BINARY_DIR}/zlib-prefix"
 				URL "https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz"
 				URL_HASH "SHA256=9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23"
-				CONFIGURE_COMMAND env "CFLAGS=${ZLIB_CFLAGS}" ./configure --prefix=${ZLIB_SRC}
+				CONFIGURE_COMMAND ./configure --prefix=${ZLIB_SRC}
+								 "${ZLIB_CFLAGS_ARG}"
 								  ${ZLIB_CONFIGURE_FLAGS}
 				BUILD_COMMAND make
 				BUILD_IN_SOURCE 1
