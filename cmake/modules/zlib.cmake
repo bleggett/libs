@@ -59,10 +59,8 @@ else()
 		if(NOT WIN32)
 			if(BUILD_SHARED_LIBS)
 				set(ZLIB_LIB_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
-				set(ZLIB_CONFIGURE_FLAGS)
 			else()
 				set(ZLIB_LIB_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
-				set(ZLIB_CONFIGURE_FLAGS "--static")
 			endif()
 			set(ZLIB_LIB "${ZLIB_SRC}/libz${ZLIB_LIB_SUFFIX}")
 			ExternalProject_Add(
@@ -70,13 +68,12 @@ else()
 				PREFIX "${PROJECT_BINARY_DIR}/zlib-prefix"
 				URL "https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz"
 				URL_HASH "SHA256=9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23"
-				CONFIGURE_COMMAND ./configure --prefix=${ZLIB_SRC}
-								  ${ZLIB_CONFIGURE_FLAGS}
-				BUILD_COMMAND make
-				BUILD_IN_SOURCE 1
+				CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+						-DCMAKE_INSTALL_PREFIX=${ZLIB_SRC}
+						-DCMAKE_C_FLAGS=${ZLIB_CFLAGS}
+						-DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
 				BUILD_BYPRODUCTS ${ZLIB_LIB}
 				INSTALL_COMMAND ""
-				ENVIRONMENT "CFLAGS=${ZLIB_CFLAGS}"
 			)
 			install(
 				FILES "${ZLIB_LIB}"
